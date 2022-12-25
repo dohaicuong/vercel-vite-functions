@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^1.12.0",
     "@prisma/client": "^4.8.0",
     "@tanstack/react-query": "^4.20.4",
     "@trpc/client": "^10.7.0",
