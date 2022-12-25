@@ -2,9 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
+import { TRPCProvider } from './providers/trpc'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <TRPCProvider>
+      <App />
+    </TRPCProvider>
   </React.StrictMode>,
 )

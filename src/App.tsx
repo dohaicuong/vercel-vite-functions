@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
+import { trpc } from './providers/trpc'
 
 function App() {
   const [count, setCount] = useState(0)
+  const { data: users } = trpc.user.browse.useQuery()
 
   return (
     <div className="App">
@@ -20,6 +22,9 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        <p>
+          There are {users?.length} users
+        </p>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
