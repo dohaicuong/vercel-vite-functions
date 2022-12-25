@@ -1,0 +1,5 @@
+- install dependencies `pnpm i`
+- cp .env.example .env
+- create postgres db and put connection string to .env
+- npx prisma db push
+- npx vercel dev
