@@ -19,6 +19,5 @@ createRoot(document.getElementById('root')!).render(
         <App />
       </TRPCProvider>
     </Auth0Provider>
-    
   </StrictMode>,
 )

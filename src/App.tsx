@@ -5,8 +5,6 @@ import { trpc } from './providers/trpc'
 import { useAuth0 } from '@auth0/auth0-react'
 
 function App() {
-  
-
   return (
     <div className="App">
       <div>
@@ -21,7 +19,7 @@ function App() {
       <div className="card">
         <ClickCountButton />
         <AuthUser />
-        <Suspense>
+        <Suspense fallback={<p>Loading...</p>}>
           <UserCount />
         </Suspense>
         <p>
@@ -59,7 +57,6 @@ export const UserCount = () => {
 
 export const AuthUser = () => {
   const { isAuthenticated, isLoading, user } = useAuth0()
-  console.log(user)
 
   if (isLoading) return <p>Loading...</p>
 
