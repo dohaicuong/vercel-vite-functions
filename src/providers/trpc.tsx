@@ -5,6 +5,14 @@ import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
 import { Suspense, type ReactNode } from 'react'
 import { AppRouter } from '../../trpc/router'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
+})
+
 export const trpc = createTRPCReact<AppRouter>()
 
 const trpcClient = trpc.createClient({
@@ -15,21 +23,13 @@ const trpcClient = trpc.createClient({
   ],
 })
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      suspense: true,
-    },
-  },
-})
-
 type TRPCProviderProps = {
   children: ReactNode | undefined;
 }
 
 export function TRPCProvider({ children }: TRPCProviderProps) {
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+    <trpc.Provider queryClient={queryClient} client={trpcClient}>
       <QueryClientProvider client={queryClient}>
         <ReactQueryDevtools initialIsOpen={false} />
         <QueryErrorBoundary>

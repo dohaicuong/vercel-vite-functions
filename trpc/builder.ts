@@ -1,3 +1,11 @@
-import { TRPCError, initTRPC } from '@trpc/server'
+import { initTRPC } from '@trpc/server'
+import { NextContext } from './context'
+import { AuthContext } from './middleware/auth'
 
-export const t = initTRPC.create()
+type Context =
+  & NextContext
+  & AuthContext
+
+export const t = initTRPC
+  .context<Context>()
+  .create()
