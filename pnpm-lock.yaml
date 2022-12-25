@@ -4,6 +4,7 @@ specifiers:
   '@emotion/react': ^11.10.5
   '@emotion/styled': ^11.10.5
   '@fontsource/roboto': ^4.5.8
+  '@hookform/resolvers': ^2.9.10
   '@mui/icons-material': ^5.11.0
   '@mui/material': ^5.11.1
   '@prisma/client': ^4.8.0
@@ -41,6 +42,7 @@ dependencies:
   '@emotion/react': 11.10.5_kzbn2opkn2327fwg5yzwzya5o4
   '@emotion/styled': 11.10.5_qvatmowesywn4ye42qoh247szu
   '@fontsource/roboto': 4.5.8
+  '@hookform/resolvers': 2.9.10_react-hook-form@7.41.1
   '@mui/icons-material': 5.11.0_q2xbhzmvmqgan5d7ygs6qjfrou
   '@mui/material': 5.11.1_lskpmcsdi7ipu6qpuapyu56ihm
   '@prisma/client': 4.8.0_prisma@4.8.0
@@ -653,6 +655,14 @@ packages:
 
   /@fontsource/roboto/4.5.8:
     resolution: {integrity: sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==}
+    dev: false
+
+  /@hookform/resolvers/2.9.10_react-hook-form@7.41.1:
+    resolution: {integrity: sha512-JIL1DgJIlH9yuxcNGtyhsWX/PgNltz+5Gr6+8SX9fhXc/hPbEIk6wPI82nhgvp3uUb6ZfAM5mqg/x7KR7NAb+A==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.41.1_react@18.2.0
     dev: false
 
   /@jridgewell/gen-mapping/0.1.1:

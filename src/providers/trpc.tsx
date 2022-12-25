@@ -19,6 +19,14 @@ const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
       url: `/api/trpc`,
+      headers: () => {
+        const jwt = localStorage.getItem('jwt')?.replaceAll('"', '')
+        if (!jwt) return {}
+
+        return {
+          authorization: `Bearer ${jwt}`
+        }
+      }
     }),
   ],
 })
