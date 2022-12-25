@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export const LoginPage = () => {
   return (
     <Container maxWidth='sm' sx={{ height: '100vh', display: 'flex', alignItems: 'center' }}>
-      <Paper sx={{ minWidth: 400, py: 2, px: 1 }}>
+      <Paper sx={{ minWidth: 400, py: 4, px: 3 }}>
         <Stack spacing={2}>
           <Typography
             variant='h5'
