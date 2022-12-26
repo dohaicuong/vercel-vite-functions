@@ -9,10 +9,22 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String          @id @default(cuid())
+  email          String          @unique
+  password       String
+  name           String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  streamSessions StreamSession[]
+}
+
+model StreamSession {
+  id          String   @id @default(cuid())
+  name        String
+  streamUrl   String
+  playbackUrl String
+  createdAt   DateTime @default(now())
+
+  streamBy       User   @relation(fields: [streamByUserId], references: [id])
+  streamByUserId String
 }

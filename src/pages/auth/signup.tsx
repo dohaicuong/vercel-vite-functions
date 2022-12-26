@@ -40,50 +40,48 @@ export const SignupPage = () => {
   }
 
   return (
-    <Container maxWidth='sm' sx={{ height: '100vh', display: 'flex', alignItems: 'center' }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Paper sx={{ minWidth: 400, py: 4, px: 3 }}>
-          <Stack spacing={2}>
-            <Typography
-              variant='h5'
-              align='center'
-              mb={2}
-            >
-              Create new account
-            </Typography>
-            <RHFTextField
-              control={control}
-              name='name'
-              label='Name'
-              disabled={isMutating}
-            />
-            <RHFTextField
-              control={control}
-              name='email'
-              label='Email'
-              disabled={isMutating}
-            />
-            <RHFTextField
-              control={control}
-              name='password'
-              label='Password'
-              type='password'
-              disabled={isMutating}
-            />
-            <Typography variant='subtitle1' component={Link} to='signup'>
-              login instead?
-            </Typography>
-            <Button
-              variant='contained'
-              size='large'
-              type='submit'
-              disabled={isMutating}
-            >
-              Login
-            </Button>
-          </Stack>
-        </Paper>
-      </form>
-    </Container>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Paper sx={{ minWidth: 400, py: 4, px: 3 }}>
+        <Stack spacing={2}>
+          <Typography
+            variant='h5'
+            align='center'
+            mb={2}
+          >
+            Create new account
+          </Typography>
+          <RHFTextField
+            control={control}
+            name='name'
+            label='Name'
+            disabled={isMutating}
+          />
+          <RHFTextField
+            control={control}
+            name='email'
+            label='Email'
+            disabled={isMutating}
+          />
+          <RHFTextField
+            control={control}
+            name='password'
+            label='Password'
+            type='password'
+            disabled={isMutating}
+          />
+          <Typography variant='subtitle1' component={Link} to='signup'>
+            login instead?
+          </Typography>
+          <Button
+            variant='contained'
+            size='large'
+            type='submit'
+            disabled={isMutating}
+          >
+            Login
+          </Button>
+        </Stack>
+      </Paper>
+    </form>
   )
 }

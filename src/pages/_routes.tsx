@@ -2,6 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import { LoginPage } from './auth/login'
 import { AuthRootPage } from './auth/root'
 import { SignupPage } from './auth/signup'
+import { StreamPage } from './auth/stream'
+import { StreamListPage } from './auth/stream-list'
 import { RootPage } from './root'
 
 export const router = createBrowserRouter([
@@ -17,5 +19,15 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
+    children: [
+      {
+        index: true,
+        element: <StreamListPage />
+      },
+      {
+        path: 'streaming',
+        element: <StreamPage />
+      }
+    ]
   },
 ])
