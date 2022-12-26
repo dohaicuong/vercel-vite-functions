@@ -8,7 +8,7 @@ import { router } from './pages/_routes'
 import { ThemeProvider } from './providers/theme'
 
 createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
+  <StrictMode>
     <Suspense>
       <TRPCProvider>
         <JotaiProvider>
@@ -18,5 +18,5 @@ createRoot(document.getElementById('root')!).render(
         </JotaiProvider>
       </TRPCProvider>
     </Suspense>
-  // </StrictMode>
+  </StrictMode>
 )

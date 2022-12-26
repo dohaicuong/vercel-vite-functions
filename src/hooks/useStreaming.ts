@@ -1,45 +1,127 @@
-import { useRef } from 'react'
-import { WHIPClient } from "@eyevinn/whip-web-client"
-import { useUserMedia } from './useUserMedia'
+import { useEffect, useRef } from 'react'
+import { WHIPClient } from '@eyevinn/whip-web-client'
+import { getUserMedia } from './useUserMedia'
 
-import { createMachine } from 'xstate'
+import { assign, createMachine } from 'xstate'
 import { useMachine } from '@xstate/react'
 import { trpc } from '../providers/trpc'
 
 export const useStreaming = () => {
-  const [state, send] = useMachine(userStreamingMachine)
   const videoIngestRef = useRef<HTMLVideoElement>(null)
+  const [state, send, service] = useMachine(userStreamingMachine)
   const { mutateAsync: createSession } = trpc.stream_session.create_session.useMutation()
 
-  const stream = useUserMedia({
-    enable: !state.matches('idle'),
-    onReady: stream => {
-      send('GOT_MEDIA')
-      videoIngestRef.current!.srcObject = stream
-    }
-  })
-
   const onGetMediaStream = () => send('GET_MEDIA')
+  const onStartStreaming = async () => send('GET_STREAM_SESSION')
+  const onStopStreaming = async () => send('STOP')
 
-  const onStartStreaming = async () => {
-    if (!videoIngestRef.current || !stream) return
+  useEffect(() => {
+    const subscription = service.subscribe(async state => {
+      if (state.matches('get_media')) {
+        const payload = await getUserMedia()
+        if (payload.name === 'GET_MEDIA_STREAM_FAILED') {
+          return send('GET_MEDIA_ERROR', { error: payload.error })
+        }
+        
+        videoIngestRef.current!.srcObject = payload.stream
+        send('GOT_MEDIA', { stream: payload.stream })
+      }
 
-    const data = await createSession({ name: 'Streaming Dota' })
-    send('GOT_STREAM_SESSION')
+      if (state.matches('get_stream_session')) {
+        const data = await createSession({ name: 'Streaming Dota' })
+        send('GOT_STREAM_SESSION', { streamUrl: data.streamUrl })
+      }
 
-    const client = new WHIPClient({
-      endpoint: data.streamUrl,
-      opts: { debug: true, iceServers: [{ urls: 'stun:stun.l.google.com:19320' }] }
+      if (state.matches('got_stream_session')) {
+        send('READY_TO_STREAM')
+      }
+
+      if (state.matches('ready_to_stream')) {
+        const client = new WHIPClient({
+          endpoint: state.context.streamUrl,
+          opts: { debug: true, iceServers: [{ urls: 'stun:stun.l.google.com:19320' }] }
+        })
+        await client.setIceServersFromEndpoint()
+        await client.ingest(state.context.stream)
+        send('STREAMING', { client })
+      }
+
+      if (state.matches('stopping')) {
+        state.context.client.destroy()
+        send('STOPPED')
+      }
     })
-    await client.setIceServersFromEndpoint()
-    
-    await client.ingest(stream)
-  }
 
-  return [state, videoIngestRef, onGetMediaStream, onStartStreaming] as const
+    return subscription.unsubscribe
+  }, [service])
+
+  return [videoIngestRef, state, onGetMediaStream, onStartStreaming, onStopStreaming] as const
 }
 
-const userStreamingMachine = createMachine({
+type StreamingMachineContext = {
+  stream?: MediaStream
+  streamUrl?: string
+  client?: WHIPClient
+}
+
+type StreamingMachineEvent =
+  | { type: 'GET_MEDIA' }
+  | { type: 'GET_MEDIA_ERROR', error: unknown }
+  | { type: 'GOT_MEDIA', stream: MediaStream }
+  | { type: 'GET_STREAM_SESSION'}
+  | { type: 'GOT_STREAM_SESSION', streamUrl: string }
+  | { type: 'READY_TO_STREAM' }
+  | { type: 'STREAMING', client: WHIPClient }
+  | { type: 'STOP' }
+  | { type: 'STOPPED' }
+
+type StreamingMachineState =
+  | { value: 'idle', context: {} }
+  | { value: 'get_media', context: {} }
+  | {
+      value: 'got_media',
+      context: {
+        stream: MediaStream
+      }
+    }
+  | {
+      value: 'get_stream_session',
+      context: {
+        stream: MediaStream
+      }
+    }
+  | {
+      value: 'got_stream_session',
+      context: {
+        stream: MediaStream
+        streamUrl: string
+      }
+    }
+  | {
+    value: 'ready_to_stream',
+    context: {
+      stream: MediaStream
+      streamUrl: string
+    }
+  }
+  | {
+      value: 'streaming',
+      context: {
+        stream: MediaStream
+        streamUrl: string
+        client: WHIPClient
+      }
+    }
+  | {
+      value: 'stopping',
+      context: {
+        stream: MediaStream
+        streamUrl: string
+        client: WHIPClient
+      }
+    }
+
+const userStreamingMachine = createMachine<StreamingMachineContext, StreamingMachineEvent, StreamingMachineState>({
   id: 'userStreaming',
   initial: 'idle',
   states: {
@@ -47,11 +129,56 @@ const userStreamingMachine = createMachine({
       on: { GET_MEDIA: 'get_media' }
     },
     get_media: {
-      on: { GOT_MEDIA: 'got_media' }
+      on: {
+        GET_MEDIA_ERROR: 'idle',
+        GOT_MEDIA: {
+          target: 'got_media',
+          actions: assign((_context, event) => ({ stream: event.stream }))
+        }
+      }
     },
     got_media: {
-      on: { GOT_STREAM_SESSION: 'got_stream_session' }
+      on: { GET_STREAM_SESSION: 'get_stream_session' }
     },
-    got_stream_session: {}
-  },
+    get_stream_session: {
+      on: {
+        GOT_STREAM_SESSION: {
+          target: 'got_stream_session',
+          actions: assign((context, event) => {
+            return {
+              ...context,
+              streamUrl: event.streamUrl
+            }
+          })
+        }
+      }
+    },
+    got_stream_session: {
+      on: { READY_TO_STREAM: 'ready_to_stream' }
+    },
+    ready_to_stream: {
+      on: {
+        STREAMING: {
+          target: 'streaming',
+          actions: assign((context, event) => {
+            return {
+              ...context,
+              client: event.client
+            }
+          })
+        }
+      }
+    },
+    streaming: {
+      on: { STOP: 'stopping' }
+    },
+    stopping: {
+      on: {
+        STOPPED: {
+          target: 'idle',
+          actions: assign(() => ({}))
+        }
+      }
+    }
+  }
 })

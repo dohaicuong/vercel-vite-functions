@@ -18,6 +18,10 @@ export const useUserMedia = ({ enable, onReady }: UseUserMedia = { enable: true 
     }
 
     if (enable) start()
+
+    return () => {
+      stream?.getTracks().forEach(track => track.stop())
+    }
   }, [enable])
 
   return stream
@@ -27,7 +31,7 @@ type GetUserMediaPayload =
   | { name: 'GET_MEDIA_STREAM_SUCCESS', stream: MediaStream }
   | { name: 'GET_MEDIA_STREAM_FAILED', error: unknown }
 
-const getUserMedia = async (): Promise<GetUserMediaPayload> => {
+export const getUserMedia = async (): Promise<GetUserMediaPayload> => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,

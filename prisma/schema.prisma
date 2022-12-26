@@ -20,6 +20,7 @@ model User {
 
 model StreamSession {
   id          String   @id @default(cuid())
+  externalId  String   @unique
   name        String
   streamUrl   String
   playbackUrl String

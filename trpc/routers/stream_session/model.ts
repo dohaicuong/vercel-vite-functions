@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const StreamSession = z.object({
   id: z.string(),
@@ -6,4 +6,5 @@ export const StreamSession = z.object({
   playbackUrl: z.string(),
   createdAt: z.date(),
   streamByUserId: z.string(),
+  status: z.string().optional(),
 })

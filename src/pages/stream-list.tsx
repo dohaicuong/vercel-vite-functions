@@ -1,6 +1,6 @@
 import { Button, Grid, List, ListItemButton, ListItemText, Paper, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { trpc } from '../../providers/trpc'
+import { trpc } from '../providers/trpc'
 import { WebRTCPlayer } from '@eyevinn/webrtc-player'
 import { Link } from 'react-router-dom'
 

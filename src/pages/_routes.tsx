@@ -2,8 +2,8 @@ import { createBrowserRouter } from 'react-router-dom'
 import { LoginPage } from './auth/login'
 import { AuthRootPage } from './auth/root'
 import { SignupPage } from './auth/signup'
-import { StreamPage } from './auth/stream'
-import { StreamListPage } from './auth/stream-list'
+import { StreamPage } from './stream'
+import { StreamListPage } from './stream-list'
 import { RootPage } from './root'
 
 export const router = createBrowserRouter([

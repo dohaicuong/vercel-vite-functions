@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { t } from '../../builder'
 import { auth } from '../../middleware/auth'
 import { prisma } from '../../client/prisma'
-import { StreamSession } from "./model"
-import { createCFStreamSession } from "../../client/cloudflare"
+import { StreamSession } from './model'
+import { createCFStreamSession } from '../../client/cloudflare'
 
 export const create_session = t.router({
   create_session: t.procedure
@@ -20,6 +20,7 @@ export const create_session = t.router({
 
       const stream_session = await prisma.streamSession.create({
         data: {
+          externalId: cfStreamSession.result.uid,
           name: input.name,
           streamUrl: cfStreamSession.result.webRTC.url,
           playbackUrl: cfStreamSession.result.webRTCPlayback.url,
